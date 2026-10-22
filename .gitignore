@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+*.log
+product_photos/
+*.mp4
+!assets/*.mp4

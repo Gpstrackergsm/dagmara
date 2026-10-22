@@ -1,0 +1,15 @@
+<section class="main-page-section">
+  <div class="container page-container">
+    <h1 class="page-title">{{ page.title | default: 'About DAGMARA Pro Tools' }}</h1>
+    <div class="page-content rte">
+      {{ page.content }}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Page",
+  "settings": []
+}
+{% endschema %}

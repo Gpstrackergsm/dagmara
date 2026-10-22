@@ -1,0 +1,14 @@
+{
+  "current": {
+    "color_primary": "#00b4d8",
+    "color_primary_hover": "#0096c7",
+    "color_accent_red": "#ef4444",
+    "color_bg_dark": "#0a0e17",
+    "color_surface": "#131a26",
+    "color_text_light": "#f8fafc",
+    "color_text_muted": "#94a3b8",
+    "color_border": "#202c3f",
+    "social_facebook_link": "https://facebook.com",
+    "social_instagram_link": "https://instagram.com"
+  }
+}

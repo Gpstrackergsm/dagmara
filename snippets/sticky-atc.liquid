@@ -1,0 +1,21 @@
+<div id="sticky-atc-bar" class="sticky-atc-bar" aria-hidden="true">
+  <div class="container sticky-atc-inner">
+    <div class="sticky-atc-product">
+      <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="DAGMARA 20V Cordless Telescopic Chainsaw" width="54" height="54" class="sticky-atc-thumb" loading="lazy">
+      <div class="sticky-atc-info">
+        <span class="sticky-atc-title">DAGMARA™ 20V 2-in-1 Telescopic Chainsaw Kit (12")</span>
+        <div class="sticky-atc-pricing">
+          <span class="sticky-atc-price">$99.00 USD</span>
+          <span class="sticky-atc-compare">$179.00</span>
+          <span class="sticky-atc-badge">Save $80 (44% OFF)</span>
+        </div>
+      </div>
+    </div>
+    <div class="sticky-atc-action">
+      <button type="button" class="btn btn-primary sticky-atc-btn" onclick="document.querySelector('#main-add-to-cart')?.click() || document.querySelector('.main-buy-btn')?.scrollIntoView({behavior:'smooth'})">
+        {% render 'icon', name: 'cart' %}
+        <span>Claim Special Offer ($99)</span>
+      </button>
+    </div>
+  </div>
+</div>

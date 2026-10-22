@@ -1,0 +1,91 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_primary | default: '#00b4d8' }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- else -%}
+      <link rel="icon" type="image/svg+xml" href="{{ 'favicon.svg' | asset_url }}">
+      <link rel="alternate icon" type="image/png" href="{{ 'favicon.png' | asset_url }}">
+      <link rel="apple-touch-icon" href="{{ 'apple-touch-icon.png' | asset_url }}">
+    {%- endif -%}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+    {%- if page_image -%}
+      <meta property="og:image" content="http:{{ page_image | image_url }}">
+      <meta property="og:image:secure_url" content="https:{{ page_image | image_url }}">
+    {%- else -%}
+      <meta property="og:image" content="{{ '01_hero_complete_kit_square.jpg' | asset_url }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {{ content_for_header }}
+
+    <style>
+      :root {
+        --color-primary: {{ settings.color_primary | default: '#00b4d8' }};
+        --color-primary-hover: {{ settings.color_primary_hover | default: '#0096c7' }};
+        --color-accent-red: {{ settings.color_accent_red | default: '#ef4444' }};
+        --color-bg-dark: {{ settings.color_bg_dark | default: '#0a0e17' }};
+        --color-surface: {{ settings.color_surface | default: '#131a26' }};
+        --color-surface-card: #182232;
+        --color-surface-card-hover: #1f2c40;
+        --color-text-light: {{ settings.color_text_light | default: '#f8fafc' }};
+        --color-text-muted: {{ settings.color_text_muted | default: '#94a3b8' }};
+        --color-border: {{ settings.color_border | default: '#202c3f' }};
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        --radius-sm: 6px;
+        --radius-md: 12px;
+        --radius-lg: 18px;
+        --radius-full: 9999px;
+        --shadow-glow: 0 0 25px rgba(0, 180, 216, 0.25);
+        --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.45);
+        --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+    </style>
+
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+  </head>
+
+  <body class="template-{{ template.name | default: 'index' }} bg-dark text-light antialiased">
+    <a class="skip-to-content sr-only focus:not-sr-only" href="#MainContent">
+      Skip to content
+    </a>
+
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+
+    {% render 'cart-drawer' %}
+    {% render 'sticky-atc' %}
+    {% render 'policy-modal' %}
+
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  </body>
+</html>

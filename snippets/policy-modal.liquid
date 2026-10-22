@@ -1,0 +1,13 @@
+<div id="policy-modal-overlay" class="policy-modal-overlay" aria-hidden="true" onclick="theme.policy.close()"></div>
+
+<div id="policy-modal" class="policy-modal" role="dialog" aria-modal="true" aria-labelledby="policy-modal-title" aria-hidden="true">
+  <div class="policy-modal-header">
+    <h2 id="policy-modal-title" class="policy-modal-title">Store Policy</h2>
+    <button type="button" class="policy-modal-close" onclick="theme.policy.close()" aria-label="Close modal">
+      {% render 'icon', name: 'close' %}
+    </button>
+  </div>
+  <div class="policy-modal-body" id="policy-modal-content">
+    <!-- Populated dynamically via JS -->
+  </div>
+</div>

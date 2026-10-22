@@ -1,0 +1,45 @@
+<header class="site-header">
+  <div class="container header-container">
+    <div class="header-logo-wrap">
+      <a href="/" class="header-logo">
+        <span class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="14" fill="#00b4d8"/>
+            <path d="M12 26 C12 22, 16 22, 24 22 L44 22 C50 22, 54 26, 54 32 C54 38, 50 42, 44 42 L24 42 C16 42, 12 42, 12 38 Z" fill="#0a0e17"/>
+            <circle cx="44" cy="32" r="4.5" fill="#00b4d8"/>
+            <polygon points="26,18 30,22 24,22" fill="#ef4444"/>
+            <polygon points="38,18 42,22 36,22" fill="#ef4444"/>
+          </svg>
+        </span>
+        <span class="logo-text">DAGMARA<span class="logo-sup">®</span></span>
+      </a>
+      <span class="header-badge">SMARTFLEXLI 20V</span>
+    </div>
+
+    <nav class="header-nav">
+      <a href="#overview" class="nav-link">Overview</a>
+      <a href="#features" class="nav-link">2-in-1 Design</a>
+      <a href="#motor" class="nav-link">1000W Motor</a>
+      <a href="#video-demo" class="nav-link">Live Demo</a>
+      <a href="#reviews" class="nav-link">Reviews</a>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="#order-now" class="btn btn-primary btn-sm header-cta">
+        <span>Order Now ($99)</span>
+      </a>
+      <button type="button" class="header-cart-btn" onclick="theme.cart.open()" aria-label="Open cart">
+        {% render 'icon', name: 'cart' %}
+        <span class="cart-count-badge" id="header-cart-count">1</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": []
+}
+{% endschema %}

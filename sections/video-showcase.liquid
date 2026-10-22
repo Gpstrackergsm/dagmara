@@ -1,0 +1,67 @@
+<section class="video-section" id="video-demo">
+  <div class="container">
+    <div class="section-header text-center">
+      <span class="badge badge-accent">REAL FIELD DEMONSTRATION</span>
+      <h2 class="section-title">See The DAGMARA 20V in Real Action</h2>
+      <p class="section-subtitle">
+        Watch unboxing, 30cm log cutting, tool-free chain mounting, auto-oiling, and telescopic high branch pruning in one continuous 56-second showcase.
+      </p>
+    </div>
+
+    <div class="video-player-wrapper">
+      <div class="video-container">
+        <video id="dagmara-video-player" class="dagmara-video" playsinline controls preload="metadata" poster="{{ '03_cutting_thick_log.jpg' | asset_url }}">
+          <source src="{{ 'dagmara-chainsaw-demo.mp4' | asset_url }}" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <!-- Video Chapter Callouts -->
+      <div class="video-chapters">
+        <div class="chapter-item" onclick="theme.video.seek(0)">
+          <span class="chapter-time">00:02</span>
+          <div class="chapter-info">
+            <strong>High Branch Pruning</strong>
+            <span>Telescopic reach cutting high limbs cleanly</span>
+          </div>
+        </div>
+        <div class="chapter-item" onclick="theme.video.seek(8)">
+          <span class="chapter-time">00:08</span>
+          <div class="chapter-info">
+            <strong>Heavy Log Slicing</strong>
+            <span>Cutting 30cm thick log with flying wood chips</span>
+          </div>
+        </div>
+        <div class="chapter-item" onclick="theme.video.seek(24)">
+          <span class="chapter-time">00:24</span>
+          <div class="chapter-info">
+            <strong>Tool-Free Chain Mount</strong>
+            <span>Quick bar alignment &amp; red twist lock knob</span>
+          </div>
+        </div>
+        <div class="chapter-item" onclick="theme.video.seek(36)">
+          <span class="chapter-time">00:36</span>
+          <div class="chapter-info">
+            <strong>Auto Oiler &amp; Kit Packaging</strong>
+            <span>Adding chain oil &amp; complete unboxing presentation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Below Video -->
+    <div class="video-cta-wrap text-center">
+      <a href="#order-now" class="btn btn-primary btn-lg pulse-glow">
+        <span>Get Your Complete Kit Today for $99 (44% OFF)</span>
+        {% render 'icon', name: 'arrow-right' %}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video Showcase",
+  "settings": []
+}
+{% endschema %}

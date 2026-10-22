@@ -1,0 +1,62 @@
+<section class="cart-page-section">
+  <div class="container cart-page-container">
+    <h1 class="cart-page-title">Shopping Cart</h1>
+    
+    <div class="cart-page-layout">
+      <div class="cart-page-main">
+        <div class="cart-table-header">
+          <span>Product</span>
+          <span>Price</span>
+          <span>Quantity</span>
+          <span>Total</span>
+        </div>
+
+        <div class="cart-item-row">
+          <div class="cart-item-info">
+            <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="DAGMARA Chainsaw Kit" width="90" height="90">
+            <div>
+              <h3>DAGMARA™ 2-in-1 Cordless Telescopic Chainsaw</h3>
+              <p>20V Brushless Motor, 12” (30cm) Bar &amp; High-Reach Extension Pole</p>
+            </div>
+          </div>
+          <div class="cart-item-unit-price">$99.00 USD</div>
+          <div class="cart-item-qty-col">
+            <div class="quantity-selector">
+              <button type="button" class="qty-btn" onclick="theme.cart.decrement()">-</button>
+              <input type="number" class="qty-input" value="1" min="1" readonly>
+              <button type="button" class="qty-btn" onclick="theme.cart.increment()">+</button>
+            </div>
+          </div>
+          <div class="cart-item-total-price">$99.00 USD</div>
+        </div>
+      </div>
+
+      <div class="cart-page-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span>$99.00 USD</span>
+        </div>
+        <div class="summary-line">
+          <span>Shipping</span>
+          <span class="text-success">FREE Express Delivery</span>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <span>$99.00 USD</span>
+        </div>
+        <a href="/checkout" class="btn btn-primary btn-block btn-lg">
+          {% render 'icon', name: 'lock' %}
+          <span>Proceed to Checkout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Cart",
+  "settings": []
+}
+{% endschema %}

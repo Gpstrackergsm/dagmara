@@ -1,0 +1,26 @@
+<div class="product-card">
+  <div class="product-card-media">
+    <a href="{{ product.url | default: '/products/dagmara-2-in-1-cordless-telescopic-chainsaw-20v-brushless-motor-12-30cm-bar-high-reach-extension-pole' }}">
+      <img src="{{ product.featured_image | default: '01_hero_complete_kit_square.jpg' | asset_url }}" alt="{{ product.title | default: 'DAGMARA 20V Chainsaw' }}" loading="lazy" width="400" height="400">
+    </a>
+    <span class="badge badge-sale">Save $80</span>
+  </div>
+  <div class="product-card-body">
+    <div class="product-card-rating">
+      <div class="stars">★★★★★</div>
+      <span>(4.9 / 5.0 • 342 Reviews)</span>
+    </div>
+    <h3 class="product-card-title">
+      <a href="{{ product.url | default: '/products/dagmara-2-in-1-cordless-telescopic-chainsaw-20v-brushless-motor-12-30cm-bar-high-reach-extension-pole' }}">
+        {{ product.title | default: 'DAGMARA™ 2-in-1 Cordless Telescopic Chainsaw – 20V Brushless Motor, 12” (30cm) Bar' }}
+      </a>
+    </h3>
+    <div class="product-card-pricing">
+      <span class="price-current">$99.00 USD</span>
+      <span class="price-compare">$179.00</span>
+    </div>
+    <button type="button" class="btn btn-primary btn-block btn-sm" onclick="theme.cart.open()">
+      Claim Special Offer
+    </button>
+  </div>
+</div>

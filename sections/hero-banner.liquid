@@ -1,0 +1,102 @@
+<section class="hero-banner" id="overview">
+  <div class="container hero-container">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="badge badge-accent">⚡ SMARTFLEXLI 20V PRO SYSTEM</span>
+        <span class="hero-rating">
+          <span class="stars">★★★★★</span>
+          <strong>4.9/5.0</strong> (340+ Verified Gardeners)
+        </span>
+      </div>
+
+      <h1 class="hero-title">
+        The Ultimate 2-in-1 Power: <br>
+        <span class="gradient-text">Handheld Chainsaw &amp; High-Reach Pole Saw</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Cut through thick 30 cm (12") tree logs on the ground, or attach the telescopic extension pole to trim high branches effortlessly—<strong>without climbing dangerous ladders or wrestling gas engines.</strong>
+      </p>
+
+      <!-- Key Value Metric Badges -->
+      <div class="hero-stats-grid">
+        <div class="hero-stat-card">
+          <span class="stat-number">1000W</span>
+          <span class="stat-label">Brushless Pure Copper Motor</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="stat-number">6,000</span>
+          <span class="stat-label">RPM Cutting Speed</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="stat-number">12" / 30cm</span>
+          <span class="stat-label">Deep Quenched Bar</span>
+        </div>
+        <div class="hero-stat-card">
+          <span class="stat-number">2-in-1</span>
+          <span class="stat-label">Telescopic Reach System</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="hero-actions">
+        <a href="#order-now" class="btn btn-primary btn-lg pulse-glow">
+          <span>Claim 44% OFF Sale ($99)</span>
+          {% render 'icon', name: 'arrow-right' %}
+        </a>
+        <a href="#video-demo" class="btn btn-outline btn-lg">
+          {% render 'icon', name: 'play' %}
+          <span>Watch 56s Live Cutting Demo</span>
+        </a>
+      </div>
+
+      <!-- Trust Bar -->
+      <div class="hero-trust-bar">
+        <div class="trust-item">
+          {% render 'icon', name: 'check' %}
+          <span>Free Express Shipping</span>
+        </div>
+        <div class="trust-item">
+          {% render 'icon', name: 'shield' %}
+          <span>2-Year Full Warranty</span>
+        </div>
+        <div class="trust-item">
+          {% render 'icon', name: 'refresh' %}
+          <span>30-Day Money-Back Guarantee</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Media Preview -->
+    <div class="hero-media-wrap">
+      <div class="hero-badge-overlay">
+        <span class="badge badge-sale">44% OFF</span>
+        <span class="badge badge-bonus">+ 2 Extra Chains Free</span>
+      </div>
+      <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="DAGMARA SMARTFLEXLI 20V Chainsaw Kit" width="600" height="600" class="hero-image" priority="high">
+      
+      <div class="hero-floating-card">
+        <div class="floating-icon">🪵</div>
+        <div class="floating-text">
+          <strong>Cuts 30cm Logs</strong>
+          <span>in under 8 seconds</span>
+        </div>
+      </div>
+
+      <div class="hero-floating-card floating-card-left">
+        <div class="floating-icon">🌱</div>
+        <div class="floating-text">
+          <strong>No Ladders Needed</strong>
+          <span>Telescopic High Reach</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": []
+}
+{% endschema %}

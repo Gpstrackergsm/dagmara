@@ -1,0 +1,33 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close"
+    },
+    "meta": {
+      "tags": "tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "buy_now": "Order Now (Pay on Delivery / Card)",
+      "quantity": "Quantity",
+      "in_stock": "In Stock — Ready to Dispatch",
+      "only_x_left": "Only {{ count }} units remaining at this promotional price"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "empty": "Your cart is currently empty",
+      "continue_shopping": "Continue Shopping",
+      "subtotal": "Subtotal",
+      "shipping_at_checkout": "Shipping & taxes calculated at checkout",
+      "checkout": "Proceed to Checkout"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner"
+    },
+    "product": {
+      "type": "main-product"
+    },
+    "telescopic": {
+      "type": "telescopic-showcase"
+    },
+    "brushless": {
+      "type": "brushless-engine"
+    },
+    "video": {
+      "type": "video-showcase"
+    },
+    "comparison": {
+      "type": "comparison-table"
+    },
+    "reviews": {
+      "type": "reviews-testimonials"
+    },
+    "faq": {
+      "type": "faq"
+    },
+    "guarantee": {
+      "type": "guarantee-banner"
+    }
+  },
+  "order": [
+    "hero",
+    "product",
+    "telescopic",
+    "brushless",
+    "video",
+    "comparison",
+    "reviews",
+    "faq",
+    "guarantee"
+  ]
+}

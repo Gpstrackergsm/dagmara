@@ -1,0 +1,98 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "DAGMARA Pro Power Tools",
+    "theme_version": "1.0.0",
+    "theme_author": "DAGMARA",
+    "theme_documentation_url": "https://ragaoon.com.co",
+    "theme_support_url": "https://ragaoon.com.co"
+  },
+  {
+    "name": "Logo & Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image"
+      }
+    ]
+  },
+  {
+    "name": "Colors & Aesthetics",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary Brand Color (Teal/Cyan)",
+        "default": "#00b4d8"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_hover",
+        "label": "Primary Hover Color",
+        "default": "#0096c7"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_red",
+        "label": "Safety Accent / Badge Color",
+        "default": "#ef4444"
+      },
+      {
+        "type": "color",
+        "id": "color_bg_dark",
+        "label": "Dark Background",
+        "default": "#0a0e17"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface / Card Background",
+        "default": "#131a26"
+      },
+      {
+        "type": "color",
+        "id": "color_text_light",
+        "label": "Heading & Light Text",
+        "default": "#f8fafc"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Muted Text",
+        "default": "#94a3b8"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Card Border",
+        "default": "#202c3f"
+      }
+    ]
+  },
+  {
+    "name": "Social Media Links",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok URL"
+      }
+    ]
+  }
+]

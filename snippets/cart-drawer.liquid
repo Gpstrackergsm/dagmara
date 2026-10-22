@@ -1,0 +1,70 @@
+<div id="cart-drawer-overlay" class="cart-drawer-overlay" aria-hidden="true" onclick="theme.cart.close()"></div>
+
+<div id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" aria-hidden="true">
+  <div class="cart-drawer-header">
+    <div class="cart-drawer-title-wrap">
+      <h2 id="cart-drawer-title" class="cart-drawer-title">
+        {% render 'icon', name: 'cart' %}
+        <span>Your Cart</span>
+      </h2>
+      <span class="cart-drawer-badge" id="cart-drawer-count">1</span>
+    </div>
+    <button type="button" class="cart-drawer-close" aria-label="Close cart" onclick="theme.cart.close()">
+      {% render 'icon', name: 'close' %}
+    </button>
+  </div>
+
+  <!-- Free Shipping Progress Bar -->
+  <div class="cart-shipping-bar">
+    <div class="cart-shipping-text">
+      {% render 'icon', name: 'truck' %}
+      <span><strong>🎉 Free Express Shipping</strong> unlocked!</span>
+    </div>
+    <div class="cart-shipping-track">
+      <div class="cart-shipping-fill" style="width: 100%;"></div>
+    </div>
+  </div>
+
+  <!-- Cart Items Container -->
+  <div class="cart-drawer-body" id="cart-drawer-items">
+    <div class="cart-item">
+      <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="DAGMARA Chainsaw Kit" width="80" height="80" class="cart-item-image">
+      <div class="cart-item-details">
+        <h3 class="cart-item-title">DAGMARA™ 2-in-1 Cordless Telescopic Chainsaw</h3>
+        <p class="cart-item-variant">20V Brushless Motor, 12” (30cm) Bar & High-Reach Extension Pole + 2 Extra Chains</p>
+        <div class="cart-item-price-row">
+          <span class="cart-item-price">$99.00 USD</span>
+          <span class="cart-item-compare">$179.00</span>
+        </div>
+        <div class="cart-item-quantity-row">
+          <div class="quantity-selector">
+            <button type="button" class="qty-btn" onclick="theme.cart.decrement()">-</button>
+            <input type="number" class="qty-input" id="cart-item-qty" value="1" min="1" readonly>
+            <button type="button" class="qty-btn" onclick="theme.cart.increment()">+</button>
+          </div>
+          <button type="button" class="cart-item-remove" onclick="theme.cart.removeItem()">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Footer -->
+  <div class="cart-drawer-footer">
+    <div class="cart-drawer-subtotal-row">
+      <span class="cart-subtotal-label">Subtotal</span>
+      <span class="cart-subtotal-price" id="cart-subtotal">$99.00 USD</span>
+    </div>
+    <p class="cart-shipping-note">Taxes included. Free insured delivery worldwide.</p>
+    
+    <a href="/checkout" class="btn btn-primary btn-block cart-checkout-btn">
+      {% render 'icon', name: 'lock' %}
+      <span>Proceed to Secure Checkout</span>
+    </a>
+
+    <div class="cart-guarantee-badges">
+      <span>{% render 'icon', name: 'shield' %} 2-Year Warranty</span>
+      <span>{% render 'icon', name: 'refresh' %} 30-Day Money Back</span>
+      <span>{% render 'icon', name: 'lock' %} SSL 256-Bit Encrypted</span>
+    </div>
+  </div>
+</div>
