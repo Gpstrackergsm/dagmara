@@ -163,20 +163,37 @@
         </div>
       </div>
 
+      <!-- Package Bundle Selectors Definition -->
+      {%- assign v_standard = nil -%}
+      {%- assign v_double   = nil -%}
+      {%- assign v_master   = nil -%}
+      {%- for v in current_product.variants -%}
+        {%- assign opt_down = v.option1 | downcase -%}
+        {%- assign title_down = v.title | downcase -%}
+        {%- if opt_down contains 'standard' or title_down contains 'standard' or v.price == 9900 -%}
+          {%- assign v_standard = v -%}
+        {%- elsif opt_down contains '18650' or title_down contains '18650' or opt_down contains 'double' or title_down contains 'double' or v.price == 12900 -%}
+          {%- assign v_double = v -%}
+        {%- elsif opt_down contains 'master' or title_down contains 'master' or v.price == 14900 -%}
+          {%- assign v_master = v -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- assign active_variant = v_standard -%}
+      {%- if active_variant == nil -%}
+        {%- assign active_variant = v_double -%}
+      {%- endif -%}
+      {%- if active_variant == nil -%}
+        {%- assign active_variant = v_master -%}
+      {%- endif -%}
+      {%- if active_variant == nil -%}
+        {%- assign active_variant = current_variant -%}
+      {%- endif -%}
+
       <!-- Official Shopify Product Form -->
       {% form 'product', current_product, id: 'MainAddToCartForm', class: 'product-purchase-form' %}
-        <input type="hidden" name="id" id="ProductVariantIdInput" value="{{ current_variant_id }}">
+        <input type="hidden" name="id" id="ProductVariantIdInput" value="{{ active_variant.id }}">
         <input type="hidden" name="quantity" id="ProductQuantityInput" value="1">
-
-        <!-- Package Bundle Selectors -->
-        {%- assign v_standard = nil -%}
-        {%- assign v_double   = nil -%}
-        {%- assign v_master   = nil -%}
-        {%- for v in current_product.variants -%}
-          {%- if v.price == 9900  -%}{%- assign v_standard = v -%}{%- endif -%}
-          {%- if v.price == 12900 -%}{%- assign v_double   = v -%}{%- endif -%}
-          {%- if v.price == 14900 -%}{%- assign v_master   = v -%}{%- endif -%}
-        {%- endfor -%}
 
         <div class="bundle-selector-group">
           <label class="bundle-group-label">Select Your Kit Configuration:</label>
