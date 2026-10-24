@@ -97,12 +97,6 @@ const theme = {
 
   // Bundle Selection
   bundles: {
-    // Helper: find variant by position (1-indexed) from Liquid-injected data
-    getVariantByPosition(position) {
-      const variants = window.__dagmaraVariants || [];
-      return variants.find(v => v.position === position) || variants[0] || null;
-    },
-
     select(element) {
       document.querySelectorAll('.bundle-option').forEach(opt => opt.classList.remove('active'));
       element.classList.add('active');
@@ -111,30 +105,24 @@ const theme = {
 
       const price = parseFloat(element.dataset.price);
       const compare = parseFloat(element.dataset.compare);
-      const bundleName = element.querySelector('.bundle-name')?.textContent || 'Standard Pro Kit';
-      const savings = compare - price;
-      const discountPercent = Math.round((savings / compare) * 100);
+      const bundleName = element.querySelector('.bundle-name')?.textContent.trim() || 'Standard Pro Kit';
+      const savings = Math.max(0, compare - price);
+      const discountPercent = compare > 0 ? Math.round((savings / compare) * 100) : 0;
 
-      // === KEY FIX: Look up the real Shopify variant ID by position ===
-      const position = parseInt(element.dataset.variantPosition || '1', 10);
-      const matchedVariant = theme.bundles.getVariantByPosition(position);
+      // Read the variant ID baked in directly by Liquid — no lookup needed
+      const variantId = element.dataset.variantId;
       const variantInput = document.getElementById('ProductVariantIdInput');
-      if (matchedVariant && variantInput) {
-        variantInput.value = matchedVariant.id;
-        console.log(`[Bundle] Selected "${bundleName}" → Variant ID: ${matchedVariant.id} @ $${matchedVariant.price}`);
-      } else if (variantInput) {
-        // Fallback: use default variant if position not found
-        variantInput.value = window.__dagmaraDefaultVariantId || variantInput.value;
-        console.warn(`[Bundle] Variant at position ${position} not found, using default.`);
+      if (variantId && variantInput) {
+        variantInput.value = variantId;
       }
 
+      // Update displayed price, compare, badge
       const priceElem = document.getElementById('product-price');
       const compareElem = document.getElementById('product-compare-price');
       const badgeElem = document.getElementById('product-discount-badge');
-
       if (priceElem) priceElem.textContent = `$${price.toFixed(2)} USD`;
       if (compareElem) compareElem.textContent = `$${compare.toFixed(2)} USD`;
-      if (badgeElem) badgeElem.textContent = `Save $${savings.toFixed(0)} (${discountPercent}% OFF)`;
+      if (badgeElem) badgeElem.textContent = savings > 0 ? `Save $${savings.toFixed(0)} (${discountPercent}% OFF)` : '';
 
       // Update sticky ATC bar
       const stickyPrice = document.querySelector('.sticky-atc-price');
@@ -143,7 +131,7 @@ const theme = {
       const stickyBtnSpan = document.querySelector('.sticky-atc-btn span');
       if (stickyPrice) stickyPrice.textContent = `$${price.toFixed(2)} USD`;
       if (stickyCompare) stickyCompare.textContent = `$${compare.toFixed(2)}`;
-      if (stickyBadge) stickyBadge.textContent = `Save $${savings.toFixed(0)} (${discountPercent}% OFF)`;
+      if (stickyBadge) stickyBadge.textContent = savings > 0 ? `Save $${savings.toFixed(0)} (${discountPercent}% OFF)` : '';
       if (stickyBtnSpan) stickyBtnSpan.textContent = `Claim Special Offer ($${price.toFixed(0)})`;
 
       // Update COD On-Page Box
@@ -572,35 +560,9 @@ async function syncCartBadge() {
   }
 }
 
-// Initialize bundle cards with real Shopify variant data
+// Initialize bundle selection on page load — variant IDs & prices are already
+// baked into data attributes by Liquid, so just trigger select() on the active card.
 function initBundleVariants() {
-  const variants = window.__dagmaraVariants || [];
-  if (!variants.length) return;
-
-  // Wire each bundle option to the real variant price & ID
-  document.querySelectorAll('.bundle-option[data-variant-position]').forEach(el => {
-    const pos = parseInt(el.dataset.variantPosition, 10);
-    const variant = variants.find(v => v.position === pos);
-    if (!variant) return;
-
-    // Override data-price with the real Shopify price
-    el.dataset.price = variant.price.toFixed(2);
-    el.dataset.compare = variant.compare_at_price > variant.price
-      ? variant.compare_at_price.toFixed(2)
-      : (variant.price * 1.8).toFixed(2); // fallback compare if not set
-
-    // Update displayed price text inside the card
-    const priceTag = el.querySelector('.bundle-price');
-    if (priceTag) priceTag.textContent = `$${variant.price.toFixed(2)} USD`;
-
-    // Mark unavailable variants
-    if (!variant.available) {
-      el.classList.add('bundle-unavailable');
-      el.setAttribute('title', 'Currently out of stock');
-    }
-  });
-
-  // Re-select the active (first) bundle to sync the variant ID input & displayed prices
   const activeBundle = document.querySelector('.bundle-option.active');
   if (activeBundle) {
     theme.bundles.select(activeBundle);

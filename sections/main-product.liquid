@@ -169,43 +169,68 @@
         <input type="hidden" name="quantity" id="ProductQuantityInput" value="1">
 
         <!-- Package Bundle Selectors -->
+        {%- assign v_standard = current_product.variants[0] -%}
+        {%- assign v_double   = current_product.variants[1] -%}
+        {%- assign v_master   = current_product.variants[2] -%}
+        {%- assign v_standard_price   = v_standard.price | divided_by: 100.0 -%}
+        {%- assign v_double_price     = v_double.price | divided_by: 100.0 -%}
+        {%- assign v_master_price     = v_master.price | divided_by: 100.0 -%}
+        {%- assign v_standard_compare = v_standard.compare_at_price | default: 17900 | divided_by: 100.0 -%}
+        {%- assign v_double_compare   = v_double.compare_at_price | default: 22900 | divided_by: 100.0 -%}
+        {%- assign v_master_compare   = v_master.compare_at_price | default: 26900 | divided_by: 100.0 -%}
+
         <div class="bundle-selector-group">
           <label class="bundle-group-label">Select Your Kit Configuration:</label>
-          
-          <!-- Bundle 1: Standard Pro Kit — Shopify variant position 1 -->
-          <div class="bundle-option active" data-bundle="standard" data-variant-position="1" data-price="99.00" data-compare="179.00" onclick="theme.bundles.select(this)">
+
+          <!-- Bundle 1: Standard Pro Kit -->
+          <div class="bundle-option active"
+               data-bundle="standard"
+               data-variant-id="{{ v_standard.id }}"
+               data-price="{{ v_standard_price }}"
+               data-compare="{{ v_standard_compare }}"
+               onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="standard" checked>
             <div class="bundle-info">
               <div class="bundle-title-row">
                 <strong class="bundle-name">Standard Pro Kit (Complete)</strong>
-                <span class="bundle-price">$99.00 USD</span>
+                <span class="bundle-price">${{ v_standard_price }} USD</span>
               </div>
               <p class="bundle-desc">Chainsaw + Telescopic Extension Pole + 1x 20V 4.5Ah Battery + Rapid Charger + 2 Extra Chains (3 Total) + Safety Gloves</p>
             </div>
           </div>
 
-          <!-- Bundle 2: Double Battery Deluxe — Shopify variant position 2 (18650 / $129) -->
-          <div class="bundle-option best-seller" data-bundle="double" data-variant-position="2" data-price="129.00" data-compare="229.00" onclick="theme.bundles.select(this)">
+          <!-- Bundle 2: Double Battery Deluxe -->
+          <div class="bundle-option best-seller"
+               data-bundle="double"
+               data-variant-id="{{ v_double.id }}"
+               data-price="{{ v_double_price }}"
+               data-compare="{{ v_double_compare }}"
+               onclick="theme.bundles.select(this)">
             <span class="best-seller-tag">★ MOST POPULAR</span>
             <input type="radio" name="bundle_choice" value="double">
             <div class="bundle-info">
               <div class="bundle-title-row">
                 <strong class="bundle-name">Double Battery Deluxe Kit</strong>
-                <span class="bundle-price">$129.00 USD</span>
+                <span class="bundle-price">${{ v_double_price }} USD</span>
               </div>
-              <p class="bundle-desc">Everything in Standard Kit + <strong>2x 20V 4.5Ah Batteries</strong> for all-day continuous yard work without charging downtime (Save $100)</p>
+              <p class="bundle-desc">Everything in Standard Kit + <strong>2x 20V 4.5Ah Batteries</strong> for all-day continuous yard work without charging downtime</p>
             </div>
           </div>
 
-          <!-- Bundle 3: Landscaper Master Kit — Shopify variant position 3 (Master Kit / $149) -->
-          <div class="bundle-option" data-bundle="master" data-variant-position="3" data-price="149.00" data-compare="269.00" onclick="theme.bundles.select(this)">
+          <!-- Bundle 3: Landscaper Master Kit -->
+          <div class="bundle-option"
+               data-bundle="master"
+               data-variant-id="{{ v_master.id }}"
+               data-price="{{ v_master_price }}"
+               data-compare="{{ v_master_compare }}"
+               onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="master">
             <div class="bundle-info">
               <div class="bundle-title-row">
                 <strong class="bundle-name">Landscaper Master Kit</strong>
-                <span class="bundle-price">$149.00 USD</span>
+                <span class="bundle-price">${{ v_master_price }} USD</span>
               </div>
-              <p class="bundle-desc">Everything in Deluxe + <strong>4 Extra Chains</strong> + Heavy-Duty Hard Storage Trunk Case (Save $120)</p>
+              <p class="bundle-desc">Everything in Deluxe + <strong>4 Extra Chains</strong> + Heavy-Duty Hard Storage Trunk Case</p>
             </div>
           </div>
         </div>
