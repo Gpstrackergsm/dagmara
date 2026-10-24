@@ -18,10 +18,11 @@ const ShopifyCart = {
     }
   },
 
-  addItem: async (variantId, quantity = 1) => {
+  addItem: async (variantId, quantity = 1, properties = {}) => {
     const payload = {
       id: Number(variantId),
-      quantity: Number(quantity)
+      quantity: Number(quantity),
+      properties: properties
     };
 
     const res = await fetch('/cart/add.js', {
@@ -59,6 +60,19 @@ const ShopifyCart = {
 
     if (!res.ok) throw new Error('Could not update cart');
     return await res.json();
+  },
+
+  clearCart: async () => {
+    const res = await fetch('/cart/clear.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'same-origin'
+    });
+    if (!res.ok) throw new Error('Could not clear cart');
+    return await res.json();
   }
 };
 
@@ -95,6 +109,13 @@ const theme = {
       const savings = compare - price;
       const discountPercent = Math.round((savings / compare) * 100);
 
+      // Update variant ID if the bundle has one
+      const bundleVariantId = element.dataset.variantId;
+      if (bundleVariantId) {
+        const variantInput = document.getElementById('ProductVariantIdInput');
+        if (variantInput) variantInput.value = bundleVariantId;
+      }
+
       const priceElem = document.getElementById('product-price');
       const compareElem = document.getElementById('product-compare-price');
       const badgeElem = document.getElementById('product-discount-badge');
@@ -120,13 +141,6 @@ const theme = {
       if (codPlan) codPlan.textContent = bundleName;
       if (codPrice) codPrice.textContent = `$${price.toFixed(2)} USD`;
       if (codTotal) codTotal.textContent = `$${price.toFixed(2)} USD`;
-
-      // Update cart drawer item price
-      const cartItemPrice = document.querySelector('.cart-item-price');
-      const cartItemCompare = document.querySelector('.cart-item-compare');
-      if (cartItemPrice) cartItemPrice.textContent = `$${price.toFixed(2)} USD`;
-      if (cartItemCompare) cartItemCompare.textContent = `$${compare.toFixed(2)}`;
-      theme.cart.updateTotal();
     }
   },
 
@@ -148,6 +162,7 @@ const theme = {
         if (hiddenInput) hiddenInput.value = input.value;
       }
     },
+
     async addToCart() {
       const atcBtn = document.getElementById('main-add-to-cart');
       const variantId = document.getElementById('ProductVariantIdInput')?.value;
@@ -158,28 +173,52 @@ const theme = {
         atcBtn.innerHTML = '<span>Adding to Cart...</span>';
       }
 
+      // Get selected bundle name for cart properties
+      const activeBundle = document.querySelector('.bundle-option.active');
+      const bundleName = activeBundle?.querySelector('.bundle-name')?.textContent || 'Standard Pro Kit';
+
       try {
-        if (variantId && variantId !== '67868873621716') {
-          await ShopifyCart.addItem(variantId, qty);
+        // Always attempt to add to the real Shopify cart
+        await ShopifyCart.addItem(variantId, qty, { 'Kit Configuration': bundleName });
+
+        // Update cart count from real cart
+        const cart = await ShopifyCart.getCart();
+        if (cart) {
+          theme.cart.updateCountBadge(cart.item_count);
         }
+
+        if (atcBtn) {
+          atcBtn.innerHTML = '<svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>✓ Added to Cart!</span>';
+        }
+
+        // Open the cart drawer with real data
+        theme.cart.open();
+
       } catch (e) {
-        console.warn('Shopify Cart addItem note:', e);
+        console.error('Add to cart failed:', e);
+
+        // Show error to user
+        const notice = document.getElementById('atc-status-notice');
+        if (notice) {
+          notice.style.display = 'block';
+          notice.textContent = e.message || 'Could not add to cart. Please try again.';
+          notice.className = 'atc-inline-notice atc-error';
+          setTimeout(() => { notice.style.display = 'none'; }, 5000);
+        }
+
+        if (atcBtn) {
+          atcBtn.innerHTML = '<svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>⚠ Error — Try Again</span>';
+        }
       } finally {
         setTimeout(() => {
           if (atcBtn) {
             atcBtn.disabled = false;
-            atcBtn.innerHTML = '<svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>✓ Added to Cart!</span>';
-            setTimeout(() => {
-              atcBtn.innerHTML = '<svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>Add to Cart — Free Delivery</span>';
-            }, 2000);
+            atcBtn.innerHTML = '<svg class="icon icon-cart" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><span>Add to Cart — Free Delivery</span>';
           }
-        }, 300);
-
-        const cartInput = document.getElementById('cart-item-qty');
-        if (cartInput) cartInput.value = qty;
-        theme.cart.open();
+        }, 3000);
       }
     },
+
     async buyNow() {
       const buyBtn = document.getElementById('main-buy-now');
       const variantId = document.getElementById('ProductVariantIdInput')?.value;
@@ -191,20 +230,29 @@ const theme = {
       }
 
       try {
-        if (variantId && variantId !== '67868873621716') {
-          await ShopifyCart.addItem(variantId, qty);
-          window.location.href = '/checkout';
-          return;
-        }
-        // Fallback to Shopify cart permalink or standard checkout
-        window.location.href = `/cart/${variantId}:${qty}`;
+        // Always add to cart first, then redirect to checkout
+        const activeBundle = document.querySelector('.bundle-option.active');
+        const bundleName = activeBundle?.querySelector('.bundle-name')?.textContent || 'Standard Pro Kit';
+
+        await ShopifyCart.addItem(variantId, qty, { 'Kit Configuration': bundleName });
+        window.location.href = '/checkout';
       } catch (err) {
-        console.warn('Checkout redirection fallback:', err);
+        console.warn('Direct add failed, trying form submit:', err);
+
+        // Fallback: try submitting the native Shopify product form
         const form = document.getElementById('MainAddToCartForm');
-        if (form && typeof form.submit === 'function') {
+        if (form) {
+          // Change the form action to go straight to checkout
+          form.action = '/cart/add';
+          const redirectInput = document.createElement('input');
+          redirectInput.type = 'hidden';
+          redirectInput.name = 'return_to';
+          redirectInput.value = '/checkout';
+          form.appendChild(redirectInput);
           form.submit();
         } else {
-          window.location.href = '/checkout';
+          // Last resort: cart permalink
+          window.location.href = `/cart/${variantId}:${qty}`;
         }
       }
     }
@@ -226,74 +274,164 @@ const theme = {
         submitBtn.innerHTML = '<span>Processing Your Order...</span>';
       }
 
-      // Generate random order ID
-      const orderId = '#DGM-' + Math.floor(1000 + Math.random() * 9000);
-      const confOrderId = document.getElementById('conf-order-id');
-      if (confOrderId) confOrderId.textContent = orderId;
+      // Get selected bundle info
+      const activeBundle = document.querySelector('.bundle-option.active');
+      const bundleName = activeBundle?.querySelector('.bundle-name')?.textContent || 'Standard Pro Kit';
+      const bundlePrice = activeBundle ? parseFloat(activeBundle.dataset.price) : 99.00;
 
-      setTimeout(() => {
-        document.getElementById('direct-cod-form').style.display = 'none';
-        document.getElementById('cod-success-message').style.display = 'block';
+      // Build Shopify checkout URL with pre-filled customer info
+      const variantId = document.getElementById('ProductVariantIdInput')?.value;
+      const qty = parseInt(document.getElementById('product-qty')?.value || 1);
 
-        // Scroll to success message smoothly
-        document.getElementById('direct-checkout-section')?.scrollIntoView({ behavior: 'smooth' });
+      // Try to create a real Shopify draft order via cart + checkout
+      (async () => {
+        try {
+          await ShopifyCart.clearCart();
+          await ShopifyCart.addItem(variantId, qty, {
+            'Kit Configuration': bundleName,
+            'Payment Method': 'Cash on Delivery (COD)',
+            'Customer Name': name,
+            'Phone': phone,
+            'Address': address + ', ' + city,
+            'Notes': notes
+          });
 
-        // Optional: trigger Meta Pixel / TikTok Pixel Purchase Event
-        if (typeof fbq === 'function') {
-          const activeBundle = document.querySelector('.bundle-option.active');
-          const amount = activeBundle ? parseFloat(activeBundle.dataset.price) : 99.00;
-          fbq('track', 'Purchase', { value: amount, currency: 'USD', content_name: 'DAGMARA 20V Chainsaw' });
+          // Redirect to Shopify checkout with pre-filled info
+          const checkoutUrl = `/checkout?checkout[shipping_address][first_name]=${encodeURIComponent(name.split(' ')[0])}&checkout[shipping_address][last_name]=${encodeURIComponent(name.split(' ').slice(1).join(' '))}&checkout[shipping_address][phone]=${encodeURIComponent(phone)}&checkout[shipping_address][address1]=${encodeURIComponent(address)}&checkout[shipping_address][city]=${encodeURIComponent(city)}&note=${encodeURIComponent('COD Order — ' + notes)}`;
+
+          window.location.href = checkoutUrl;
+        } catch (e) {
+          console.warn('COD cart setup failed, showing confirmation:', e);
+
+          // Fallback: show on-page confirmation if Shopify cart fails
+          const orderId = '#DGM-' + Math.floor(1000 + Math.random() * 9000);
+          const confOrderId = document.getElementById('conf-order-id');
+          if (confOrderId) confOrderId.textContent = orderId;
+
+          document.getElementById('direct-cod-form').style.display = 'none';
+          document.getElementById('cod-success-message').style.display = 'block';
+          document.getElementById('direct-checkout-section')?.scrollIntoView({ behavior: 'smooth' });
+
+          // Fire Meta Pixel Purchase event
+          if (typeof fbq === 'function') {
+            fbq('track', 'Purchase', { value: bundlePrice, currency: 'USD', content_name: 'DAGMARA 20V Chainsaw' });
+          }
         }
-      }, 1000);
+      })();
     }
   },
 
   // Cart Drawer
   cart: {
-    open() {
+    async open() {
+      // Fetch real cart data and render it
+      const cart = await ShopifyCart.getCart();
+      if (cart && cart.items && cart.items.length > 0) {
+        theme.cart.renderItems(cart);
+      }
+
       document.getElementById('cart-drawer')?.classList.add('active');
       document.getElementById('cart-drawer-overlay')?.classList.add('active');
-      theme.cart.updateTotal();
     },
+
     close() {
       document.getElementById('cart-drawer')?.classList.remove('active');
       document.getElementById('cart-drawer-overlay')?.classList.remove('active');
     },
-    increment() {
-      const input = document.getElementById('cart-item-qty');
-      if (input) {
-        input.value = parseInt(input.value) + 1;
-        theme.cart.updateTotal();
+
+    renderItems(cart) {
+      const container = document.getElementById('cart-drawer-items');
+      if (!container) return;
+
+      if (!cart.items || cart.items.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 3rem 1rem; color: #94a3b8;"><p style="font-size: 1.1rem; margin-bottom: 1rem;">Your cart is currently empty.</p><a href="#order-now" class="btn btn-outline btn-sm" onclick="theme.cart.close()">Continue Shopping</a></div>';
+        theme.cart.updateCountBadge(0);
+        const subtotal = document.getElementById('cart-subtotal');
+        if (subtotal) subtotal.textContent = '$0.00 USD';
+        return;
       }
-    },
-    decrement() {
-      const input = document.getElementById('cart-item-qty');
-      if (input && parseInt(input.value) > 1) {
-        input.value = parseInt(input.value) - 1;
-        theme.cart.updateTotal();
-      }
-    },
-    removeItem() {
-      const itemsContainer = document.getElementById('cart-drawer-items');
-      if (itemsContainer) {
-        itemsContainer.innerHTML = '<div style="text-align: center; padding: 3rem 1rem; color: #94a3b8;"><p style="font-size: 1.1rem; margin-bottom: 1rem;">Your cart is currently empty.</p><a href="#order-now" class="btn btn-outline btn-sm" onclick="theme.cart.close()">Continue Shopping</a></div>';
-      }
-      const countBadges = document.querySelectorAll('#header-cart-count, #cart-drawer-count');
-      countBadges.forEach(b => b.textContent = '0');
+
+      let html = '';
+      cart.items.forEach((item, index) => {
+        const price = (item.final_price / 100).toFixed(2);
+        const comparePrice = item.original_price > item.final_price ? `<span class="cart-item-compare">$${(item.original_price / 100).toFixed(2)}</span>` : '';
+        const imgSrc = item.featured_image?.url || item.image || '';
+        const properties = item.properties || {};
+        let propsHtml = '';
+        for (const [key, val] of Object.entries(properties)) {
+          if (val && key.charAt(0) !== '_') {
+            propsHtml += `<span class="cart-item-prop">${key}: ${val}</span>`;
+          }
+        }
+
+        html += `
+          <div class="cart-item" data-line="${index + 1}" data-key="${item.key}">
+            <img src="${imgSrc}" alt="${item.title}" width="80" height="80" class="cart-item-image">
+            <div class="cart-item-details">
+              <h3 class="cart-item-title">${item.product_title}</h3>
+              ${item.variant_title ? `<p class="cart-item-variant">${item.variant_title}</p>` : ''}
+              ${propsHtml ? `<div class="cart-item-props">${propsHtml}</div>` : ''}
+              <div class="cart-item-price-row">
+                <span class="cart-item-price">$${price} USD</span>
+                ${comparePrice}
+              </div>
+              <div class="cart-item-quantity-row">
+                <div class="quantity-selector">
+                  <button type="button" class="qty-btn" onclick="theme.cart.changeQty('${item.key}', ${item.quantity - 1})">-</button>
+                  <input type="number" class="qty-input" value="${item.quantity}" min="0" readonly>
+                  <button type="button" class="qty-btn" onclick="theme.cart.changeQty('${item.key}', ${item.quantity + 1})">+</button>
+                </div>
+                <button type="button" class="cart-item-remove" onclick="theme.cart.changeQty('${item.key}', 0)">Remove</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Update subtotal and count
       const subtotal = document.getElementById('cart-subtotal');
-      if (subtotal) subtotal.textContent = '$0.00 USD';
+      if (subtotal) subtotal.textContent = `$${(cart.total_price / 100).toFixed(2)} USD`;
+      theme.cart.updateCountBadge(cart.item_count);
     },
+
+    async changeQty(lineKey, newQty) {
+      try {
+        const cart = await ShopifyCart.changeItem(lineKey, newQty);
+        theme.cart.renderItems(cart);
+      } catch (e) {
+        console.error('Cart update failed:', e);
+      }
+    },
+
+    async removeItem(lineKey) {
+      await theme.cart.changeQty(lineKey, 0);
+    },
+
+    updateCountBadge(count) {
+      const countBadges = document.querySelectorAll('#header-cart-count, #cart-drawer-count');
+      countBadges.forEach(b => {
+        b.textContent = count;
+        if (count > 0) {
+          b.style.display = '';
+        }
+      });
+    },
+
+    // Legacy method kept for backward compatibility
     updateTotal() {
-      const activeBundle = document.querySelector('.bundle-option.active');
-      const unitPrice = activeBundle ? parseFloat(activeBundle.dataset.price) : 99.00;
-      const qty = parseInt(document.getElementById('cart-item-qty')?.value || 1);
-      const total = unitPrice * qty;
+      // Now handled by renderItems from real cart data
+    },
 
-      const subtotal = document.getElementById('cart-subtotal');
-      if (subtotal) subtotal.textContent = `$${total.toFixed(2)} USD`;
+    increment() {
+      // Legacy - kept for any hardcoded onclick references
+      theme.product.incrementQty();
+    },
 
-      const countBadges = document.querySelectorAll('#header-cart-count, #cart-drawer-count');
-      countBadges.forEach(b => b.textContent = qty);
+    decrement() {
+      // Legacy - kept for any hardcoded onclick references  
+      theme.product.decrementQty();
     }
   },
 
@@ -410,8 +548,21 @@ function setupStickyATC() {
   observer.observe(buyBtn);
 }
 
+// Sync cart count badge on page load
+async function syncCartBadge() {
+  try {
+    const cart = await ShopifyCart.getCart();
+    if (cart) {
+      theme.cart.updateCountBadge(cart.item_count);
+    }
+  } catch (e) {
+    // Silent fail on initial load
+  }
+}
+
 // Document Ready Initialization
 document.addEventListener('DOMContentLoaded', () => {
   startCountdown();
   setupStickyATC();
+  syncCartBadge();
 });

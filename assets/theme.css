@@ -1918,6 +1918,43 @@ button, input {
   color: #ef4444;
 }
 
+.cart-item-props {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.cart-item-prop {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  background: rgba(255,255,255,0.05);
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* ATC Status Notices */
+.atc-inline-notice {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.atc-inline-notice.atc-error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.atc-inline-notice.atc-success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
 .cart-drawer-footer {
   padding: 1.5rem;
   border-top: 1px solid var(--color-border);
