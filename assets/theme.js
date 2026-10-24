@@ -97,6 +97,12 @@ const theme = {
 
   // Bundle Selection
   bundles: {
+    // Helper: find variant by position (1-indexed) from Liquid-injected data
+    getVariantByPosition(position) {
+      const variants = window.__dagmaraVariants || [];
+      return variants.find(v => v.position === position) || variants[0] || null;
+    },
+
     select(element) {
       document.querySelectorAll('.bundle-option').forEach(opt => opt.classList.remove('active'));
       element.classList.add('active');
@@ -109,11 +115,17 @@ const theme = {
       const savings = compare - price;
       const discountPercent = Math.round((savings / compare) * 100);
 
-      // Update variant ID if the bundle has one
-      const bundleVariantId = element.dataset.variantId;
-      if (bundleVariantId) {
-        const variantInput = document.getElementById('ProductVariantIdInput');
-        if (variantInput) variantInput.value = bundleVariantId;
+      // === KEY FIX: Look up the real Shopify variant ID by position ===
+      const position = parseInt(element.dataset.variantPosition || '1', 10);
+      const matchedVariant = theme.bundles.getVariantByPosition(position);
+      const variantInput = document.getElementById('ProductVariantIdInput');
+      if (matchedVariant && variantInput) {
+        variantInput.value = matchedVariant.id;
+        console.log(`[Bundle] Selected "${bundleName}" → Variant ID: ${matchedVariant.id} @ $${matchedVariant.price}`);
+      } else if (variantInput) {
+        // Fallback: use default variant if position not found
+        variantInput.value = window.__dagmaraDefaultVariantId || variantInput.value;
+        console.warn(`[Bundle] Variant at position ${position} not found, using default.`);
       }
 
       const priceElem = document.getElementById('product-price');
@@ -560,9 +572,45 @@ async function syncCartBadge() {
   }
 }
 
+// Initialize bundle cards with real Shopify variant data
+function initBundleVariants() {
+  const variants = window.__dagmaraVariants || [];
+  if (!variants.length) return;
+
+  // Wire each bundle option to the real variant price & ID
+  document.querySelectorAll('.bundle-option[data-variant-position]').forEach(el => {
+    const pos = parseInt(el.dataset.variantPosition, 10);
+    const variant = variants.find(v => v.position === pos);
+    if (!variant) return;
+
+    // Override data-price with the real Shopify price
+    el.dataset.price = variant.price.toFixed(2);
+    el.dataset.compare = variant.compare_at_price > variant.price
+      ? variant.compare_at_price.toFixed(2)
+      : (variant.price * 1.8).toFixed(2); // fallback compare if not set
+
+    // Update displayed price text inside the card
+    const priceTag = el.querySelector('.bundle-price');
+    if (priceTag) priceTag.textContent = `$${variant.price.toFixed(2)} USD`;
+
+    // Mark unavailable variants
+    if (!variant.available) {
+      el.classList.add('bundle-unavailable');
+      el.setAttribute('title', 'Currently out of stock');
+    }
+  });
+
+  // Re-select the active (first) bundle to sync the variant ID input & displayed prices
+  const activeBundle = document.querySelector('.bundle-option.active');
+  if (activeBundle) {
+    theme.bundles.select(activeBundle);
+  }
+}
+
 // Document Ready Initialization
 document.addEventListener('DOMContentLoaded', () => {
   startCountdown();
   setupStickyATC();
   syncCartBadge();
+  initBundleVariants();
 });

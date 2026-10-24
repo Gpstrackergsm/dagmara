@@ -15,6 +15,25 @@
 {%- assign current_variant = current_product.selected_or_first_available_variant -%}
 {%- assign current_variant_id = current_variant.id -%}
 
+{%- comment -%} Build a JSON array of all variants for JS to consume {%- endcomment -%}
+<script>
+  window.__dagmaraVariants = [
+    {%- for variant in current_product.variants -%}
+      {
+        "id": {{ variant.id }},
+        "title": {{ variant.title | json }},
+        "price": {{ variant.price | divided_by: 100.0 }},
+        "compare_at_price": {{ variant.compare_at_price | default: variant.price | divided_by: 100.0 }},
+        "available": {{ variant.available }},
+        "option1": {{ variant.option1 | json }},
+        "position": {{ variant.position }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ];
+  // Default selected variant ID
+  window.__dagmaraDefaultVariantId = {{ current_variant_id }};
+</script>
+
 <section class="main-product-section" id="order-now">
   <div class="container main-product-container">
     
@@ -153,8 +172,8 @@
         <div class="bundle-selector-group">
           <label class="bundle-group-label">Select Your Kit Configuration:</label>
           
-          <!-- Bundle 1: Standard Pro Kit -->
-          <div class="bundle-option active" data-bundle="standard" data-price="99.00" data-compare="179.00" onclick="theme.bundles.select(this)">
+          <!-- Bundle 1: Standard Pro Kit — Shopify variant position 1 -->
+          <div class="bundle-option active" data-bundle="standard" data-variant-position="1" data-price="99.00" data-compare="179.00" onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="standard" checked>
             <div class="bundle-info">
               <div class="bundle-title-row">
@@ -165,8 +184,8 @@
             </div>
           </div>
 
-          <!-- Bundle 2: Double Battery Deluxe (Best Seller) -->
-          <div class="bundle-option best-seller" data-bundle="double" data-price="129.00" data-compare="229.00" onclick="theme.bundles.select(this)">
+          <!-- Bundle 2: Double Battery Deluxe — Shopify variant position 2 (18650 / $129) -->
+          <div class="bundle-option best-seller" data-bundle="double" data-variant-position="2" data-price="129.00" data-compare="229.00" onclick="theme.bundles.select(this)">
             <span class="best-seller-tag">★ MOST POPULAR</span>
             <input type="radio" name="bundle_choice" value="double">
             <div class="bundle-info">
@@ -178,8 +197,8 @@
             </div>
           </div>
 
-          <!-- Bundle 3: Landscaper Master Pack -->
-          <div class="bundle-option" data-bundle="master" data-price="149.00" data-compare="269.00" onclick="theme.bundles.select(this)">
+          <!-- Bundle 3: Landscaper Master Kit — Shopify variant position 3 (Master Kit / $149) -->
+          <div class="bundle-option" data-bundle="master" data-variant-position="3" data-price="149.00" data-compare="269.00" onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="master">
             <div class="bundle-info">
               <div class="bundle-title-row">
