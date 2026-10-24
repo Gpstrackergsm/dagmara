@@ -508,6 +508,31 @@ const theme = {
       document.getElementById('policy-modal')?.classList.remove('active');
       document.getElementById('policy-modal-overlay')?.classList.remove('active');
     }
+  },
+
+  // Dedicated Cart Page Handlers (/cart)
+  cartPage: {
+    async changeQty(lineKey, newQty) {
+      const qty = Math.max(0, parseInt(newQty, 10));
+      try {
+        await ShopifyCart.changeItem(lineKey, qty);
+        window.location.reload();
+      } catch (err) {
+        console.error('Cart page update error:', err);
+        const form = document.getElementById('CartPageForm');
+        if (form) form.submit();
+      }
+    },
+    async removeItem(event, lineKey) {
+      if (event && event.preventDefault) event.preventDefault();
+      try {
+        await ShopifyCart.changeItem(lineKey, 0);
+        window.location.reload();
+      } catch (err) {
+        console.error('Cart page remove error:', err);
+        window.location.href = `/cart/change?id=${lineKey}&quantity=0`;
+      }
+    }
   }
 };
 

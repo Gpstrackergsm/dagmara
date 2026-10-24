@@ -1,56 +1,194 @@
 <section class="cart-page-section">
   <div class="container cart-page-container">
-    <h1 class="cart-page-title">Shopping Cart</h1>
-    
-    <div class="cart-page-layout">
-      <div class="cart-page-main">
-        <div class="cart-table-header">
-          <span>Product</span>
-          <span>Price</span>
-          <span>Quantity</span>
-          <span>Total</span>
-        </div>
+    <div class="cart-page-header">
+      <h1 class="cart-page-title">Shopping Cart</h1>
+      <span class="cart-page-count">({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})</span>
+    </div>
 
-        <div class="cart-item-row">
-          <div class="cart-item-info">
-            <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="DAGMARA Chainsaw Kit" width="90" height="90">
-            <div>
-              <h3>DAGMARA™ 2-in-1 Cordless Telescopic Chainsaw</h3>
-              <p>20V Brushless Motor, 12” (30cm) Bar &amp; High-Reach Extension Pole</p>
-            </div>
-          </div>
-          <div class="cart-item-unit-price">$99.00 USD</div>
-          <div class="cart-item-qty-col">
-            <div class="quantity-selector">
-              <button type="button" class="qty-btn" onclick="theme.cart.decrement()">-</button>
-              <input type="number" class="qty-input" value="1" min="1" readonly>
-              <button type="button" class="qty-btn" onclick="theme.cart.increment()">+</button>
-            </div>
-          </div>
-          <div class="cart-item-total-price">$99.00 USD</div>
+    {%- if cart.item_count == 0 -%}
+      <div class="cart-empty-state">
+        <div class="cart-empty-icon">
+          {% render 'icon', name: 'cart' %}
         </div>
-      </div>
-
-      <div class="cart-page-summary">
-        <h2>Order Summary</h2>
-        <div class="summary-line">
-          <span>Subtotal</span>
-          <span>$99.00 USD</span>
-        </div>
-        <div class="summary-line">
-          <span>Shipping</span>
-          <span class="text-success">FREE Express Delivery</span>
-        </div>
-        <div class="summary-total">
-          <span>Total</span>
-          <span>$99.00 USD</span>
-        </div>
-        <a href="/checkout" class="btn btn-primary btn-block btn-lg">
-          {% render 'icon', name: 'lock' %}
-          <span>Proceed to Checkout</span>
+        <h2>Your cart is currently empty</h2>
+        <p>Looks like you haven't added the DAGMARA 20V Chainsaw to your cart yet.</p>
+        <a href="/#order-now" class="btn btn-primary btn-lg">
+          {% render 'icon', name: 'arrow-right' %}
+          <span>Claim Special Offer ($99)</span>
         </a>
       </div>
-    </div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" id="CartPageForm" class="cart-page-form">
+        <div class="cart-page-layout">
+          
+          <!-- Left: Cart Items List -->
+          <div class="cart-page-main">
+            <div class="cart-table-head">
+              <span class="col-product">Product</span>
+              <span class="col-price">Price</span>
+              <span class="col-qty">Quantity</span>
+              <span class="col-total">Total</span>
+            </div>
+
+            <div class="cart-items-list">
+              {%- for item in cart.items -%}
+                <div class="cart-row-item" data-line-key="{{ item.key }}" data-line-index="{{ forloop.index }}">
+                  
+                  <!-- Product Image & Details -->
+                  <div class="cart-col-product">
+                    <a href="{{ item.url }}" class="cart-thumb-link">
+                      {%- if item.image -%}
+                        <img src="{{ item.image | image_url: width: 180 }}" alt="{{ item.title | escape }}" width="90" height="90" loading="lazy">
+                      {%- else -%}
+                        <img src="{{ '01_hero_complete_kit_square.jpg' | asset_url }}" alt="{{ item.title | escape }}" width="90" height="90">
+                      {%- endif -%}
+                    </a>
+                    <div class="cart-item-meta">
+                      <h3 class="cart-item-heading">
+                        <a href="{{ item.url }}">{{ item.product.title }}</a>
+                      </h3>
+                      {%- unless item.product.has_only_default_variant -%}
+                        <span class="cart-item-variant-name">{{ item.variant.title }}</span>
+                      {%- endunless -%}
+
+                      {%- if item.properties.size > 0 -%}
+                        <div class="cart-item-custom-props">
+                          {%- for prop in item.properties -%}
+                            {%- assign first_char = prop.first | slice: 0 -%}
+                            {%- unless prop.last == blank or first_char == '_' -%}
+                              <span class="cart-prop-tag">{{ prop.first }}: {{ prop.last }}</span>
+                            {%- endunless -%}
+                          {%- endfor -%}
+                        </div>
+                      {%- endif -%}
+
+                      <!-- Mobile price display -->
+                      <div class="cart-mobile-price">
+                        <span>{{ item.final_price | money }}</span>
+                      </div>
+
+                      <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" 
+                         class="cart-row-remove" 
+                         onclick="theme.cartPage.removeItem(event, '{{ item.key }}')">
+                        Remove
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Price -->
+                  <div class="cart-col-price">
+                    <span class="cart-price-val">{{ item.final_price | money }}</span>
+                    {%- if item.original_price > item.final_price -%}
+                      <span class="cart-compare-val">{{ item.original_price | money }}</span>
+                    {%- endif -%}
+                  </div>
+
+                  <!-- Quantity Selector -->
+                  <div class="cart-col-qty">
+                    <div class="quantity-selector">
+                      <button type="button" 
+                              class="qty-btn" 
+                              aria-label="Decrease quantity"
+                              onclick="theme.cartPage.changeQty('{{ item.key }}', {{ item.quantity | minus: 1 }})">−</button>
+                      <input type="number" 
+                             name="updates[]" 
+                             id="updates_{{ item.key }}" 
+                             value="{{ item.quantity }}" 
+                             min="0" 
+                             class="qty-input"
+                             aria-label="Quantity"
+                             onchange="theme.cartPage.changeQty('{{ item.key }}', this.value)">
+                      <button type="button" 
+                              class="qty-btn" 
+                              aria-label="Increase quantity"
+                              onclick="theme.cartPage.changeQty('{{ item.key }}', {{ item.quantity | plus: 1 }})">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Line Total -->
+                  <div class="cart-col-total">
+                    <span class="cart-line-total">{{ item.final_line_price | money }}</span>
+                  </div>
+
+                </div>
+              {%- endfor -%}
+            </div>
+
+            <div class="cart-actions-row">
+              <a href="/#order-now" class="btn btn-outline btn-sm">
+                ← Continue Shopping
+              </a>
+              <button type="submit" name="update" class="btn btn-outline btn-sm" id="cart-update-btn">
+                Update Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Order Summary Sidebar -->
+          <div class="cart-page-summary">
+            <h2 class="summary-heading">Order Summary</h2>
+
+            <div class="summary-progress-bar">
+              <div class="summary-shipping-text">
+                {% render 'icon', name: 'truck' %}
+                <span><strong>Free Express Shipping</strong> Unlocked!</span>
+              </div>
+              <div class="summary-shipping-track">
+                <div class="summary-shipping-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div class="summary-breakdown">
+              <div class="summary-line">
+                <span>Subtotal</span>
+                <strong id="cart-page-subtotal">{{ cart.total_price | money }}</strong>
+              </div>
+              <div class="summary-line">
+                <span>Shipping Fee</span>
+                <strong class="text-success">FREE Express Delivery</strong>
+              </div>
+              <div class="summary-line">
+                <span>Transit Insurance</span>
+                <strong class="text-success">Included (Free)</strong>
+              </div>
+              <div class="summary-line summary-total-row">
+                <span>Total Amount</span>
+                <strong class="summary-total-price" id="cart-page-total">{{ cart.total_price | money }}</strong>
+              </div>
+            </div>
+
+            <!-- Optional Customer Order Note -->
+            <div class="cart-order-notes">
+              <label for="CartSpecialInstructions">Special Delivery Instructions (Optional):</label>
+              <textarea name="note" id="CartSpecialInstructions" rows="2" placeholder="e.g. Leave at front door or gate code...">{{ cart.note }}</textarea>
+            </div>
+
+            <!-- Checkout Button -->
+            <button type="submit" name="checkout" class="btn btn-primary btn-block btn-lg cart-checkout-btn">
+              {% render 'icon', name: 'lock' %}
+              <span>Proceed to Checkout</span>
+            </button>
+
+            <!-- Trust / Guarantee Badges -->
+            <div class="cart-trust-box">
+              <div class="trust-badge-row">
+                {% render 'icon', name: 'shield' %}
+                <span>2-Year Manufacturer Warranty</span>
+              </div>
+              <div class="trust-badge-row">
+                {% render 'icon', name: 'refresh' %}
+                <span>30-Day Money-Back Guarantee</span>
+              </div>
+              <div class="trust-badge-row">
+                {% render 'icon', name: 'lock' %}
+                <span>256-Bit SSL Encrypted Checkout</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </form>
+    {%- endif -%}
   </div>
 </section>
 
