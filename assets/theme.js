@@ -103,8 +103,11 @@ const theme = {
       const radio = element.querySelector('input[type="radio"]');
       if (radio) radio.checked = true;
 
-      const price = parseFloat(element.dataset.price);
-      const compare = parseFloat(element.dataset.compare);
+      // data-price and data-compare are in CENTS (raw Shopify integers), divide by 100
+      const priceCents   = parseInt(element.dataset.price, 10)   || 0;
+      const compareCents = parseInt(element.dataset.compare, 10) || 0;
+      const price   = priceCents / 100;
+      const compare = compareCents / 100;
       const bundleName = element.querySelector('.bundle-name')?.textContent.trim() || 'Standard Pro Kit';
       const savings = Math.max(0, compare - price);
       const discountPercent = compare > 0 ? Math.round((savings / compare) * 100) : 0;
