@@ -136,14 +136,6 @@ const theme = {
       if (stickyCompare) stickyCompare.textContent = `$${compare.toFixed(2)}`;
       if (stickyBadge) stickyBadge.textContent = savings > 0 ? `Save $${savings.toFixed(0)} (${discountPercent}% OFF)` : '';
       if (stickyBtnSpan) stickyBtnSpan.textContent = `Claim Special Offer ($${price.toFixed(0)})`;
-
-      // Update COD On-Page Box
-      const codPlan = document.getElementById('cod-selected-plan');
-      const codPrice = document.getElementById('cod-price-display');
-      const codTotal = document.getElementById('cod-total-display');
-      if (codPlan) codPlan.textContent = bundleName;
-      if (codPrice) codPrice.textContent = `$${price.toFixed(2)} USD`;
-      if (codTotal) codTotal.textContent = `$${price.toFixed(2)} USD`;
     }
   },
 
@@ -258,69 +250,6 @@ const theme = {
           window.location.href = `/cart/${variantId}:${qty}`;
         }
       }
-    }
-  },
-
-  // On-Page Direct Express Checkout & Cash on Delivery (COD)
-  checkout: {
-    submitCOD(event) {
-      event.preventDefault();
-      const name = document.getElementById('cod-name')?.value;
-      const phone = document.getElementById('cod-phone')?.value;
-      const address = document.getElementById('cod-address')?.value;
-      const city = document.getElementById('cod-city')?.value;
-      const notes = document.getElementById('cod-notes')?.value || '';
-
-      const submitBtn = document.getElementById('cod-submit-btn');
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>Processing Your Order...</span>';
-      }
-
-      // Get selected bundle info
-      const activeBundle = document.querySelector('.bundle-option.active');
-      const bundleName = activeBundle?.querySelector('.bundle-name')?.textContent || 'Standard Pro Kit';
-      const bundlePrice = activeBundle ? parseFloat(activeBundle.dataset.price) : 99.00;
-
-      // Build Shopify checkout URL with pre-filled customer info
-      const variantId = document.getElementById('ProductVariantIdInput')?.value;
-      const qty = parseInt(document.getElementById('product-qty')?.value || 1);
-
-      // Try to create a real Shopify draft order via cart + checkout
-      (async () => {
-        try {
-          await ShopifyCart.clearCart();
-          await ShopifyCart.addItem(variantId, qty, {
-            'Kit Configuration': bundleName,
-            'Payment Method': 'Cash on Delivery (COD)',
-            'Customer Name': name,
-            'Phone': phone,
-            'Address': address + ', ' + city,
-            'Notes': notes
-          });
-
-          // Redirect to Shopify checkout with pre-filled info
-          const checkoutUrl = `/checkout?checkout[shipping_address][first_name]=${encodeURIComponent(name.split(' ')[0])}&checkout[shipping_address][last_name]=${encodeURIComponent(name.split(' ').slice(1).join(' '))}&checkout[shipping_address][phone]=${encodeURIComponent(phone)}&checkout[shipping_address][address1]=${encodeURIComponent(address)}&checkout[shipping_address][city]=${encodeURIComponent(city)}&note=${encodeURIComponent('COD Order — ' + notes)}`;
-
-          window.location.href = checkoutUrl;
-        } catch (e) {
-          console.warn('COD cart setup failed, showing confirmation:', e);
-
-          // Fallback: show on-page confirmation if Shopify cart fails
-          const orderId = '#DGM-' + Math.floor(1000 + Math.random() * 9000);
-          const confOrderId = document.getElementById('conf-order-id');
-          if (confOrderId) confOrderId.textContent = orderId;
-
-          document.getElementById('direct-cod-form').style.display = 'none';
-          document.getElementById('cod-success-message').style.display = 'block';
-          document.getElementById('direct-checkout-section')?.scrollIntoView({ behavior: 'smooth' });
-
-          // Fire Meta Pixel Purchase event
-          if (typeof fbq === 'function') {
-            fbq('track', 'Purchase', { value: bundlePrice, currency: 'USD', content_name: 'DAGMARA 20V Chainsaw' });
-          }
-        }
-      })();
     }
   },
 

@@ -291,77 +291,6 @@
         <div id="atc-status-notice" class="atc-inline-notice" style="display: none;"></div>
       {% endform %}
 
-      <!-- Direct On-Page Express Checkout / Cash On Delivery (COD) Form -->
-      <div class="direct-checkout-card" id="direct-checkout-section">
-        <div class="direct-checkout-header">
-          <div class="dch-icon">📦</div>
-          <div>
-            <h3 class="direct-checkout-title">Fast Order / Cash On Delivery (COD)</h3>
-            <p class="direct-checkout-subtitle">Fill in your address below to order directly without prepayment!</p>
-          </div>
-        </div>
-
-        <form id="direct-cod-form" class="cod-order-form" onsubmit="theme.checkout.submitCOD(event)">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="cod-name">Full Name *</label>
-              <input type="text" id="cod-name" class="form-input" placeholder="e.g. John Miller" required>
-            </div>
-            <div class="form-group">
-              <label for="cod-phone">Phone Number (For Delivery SMS) *</label>
-              <input type="tel" id="cod-phone" class="form-input" placeholder="e.g. +1 (555) 019-2834" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="cod-address">Street Address / House Number *</label>
-            <input type="text" id="cod-address" class="form-input" placeholder="e.g. 742 Evergreen Terrace, Apt 4B" required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="cod-city">City / Region *</label>
-              <input type="text" id="cod-city" class="form-input" placeholder="e.g. Austin, TX" required>
-            </div>
-            <div class="form-group">
-              <label for="cod-notes">Delivery Instructions (Optional)</label>
-              <input type="text" id="cod-notes" class="form-input" placeholder="e.g. Leave at front porch">
-            </div>
-          </div>
-
-          <div class="cod-summary-box">
-            <div class="cod-summary-line">
-              <span id="cod-selected-plan">Standard Pro Kit (Complete)</span>
-              <strong id="cod-price-display">$99.00 USD</strong>
-            </div>
-            <div class="cod-summary-line">
-              <span>Shipping Fee:</span>
-              <strong class="text-success">FREE Express Delivery</strong>
-            </div>
-            <div class="cod-summary-line cod-total-line">
-              <span>Amount to Pay upon Delivery:</span>
-              <strong class="cod-total-price" id="cod-total-display">$99.00 USD</strong>
-            </div>
-          </div>
-
-          <button type="submit" id="cod-submit-btn" class="btn btn-primary btn-block btn-lg cod-submit-btn">
-            {% render 'icon', name: 'check' %}
-            <span>Confirm Order — Cash On Delivery</span>
-          </button>
-        </form>
-
-        <div id="cod-success-message" class="cod-success-card" style="display: none;">
-          <div class="success-icon">🎉</div>
-          <h3>Thank You! Your Order is Confirmed!</h3>
-          <p>We have received your order. Our warehouse team is preparing your package for same-day dispatch.</p>
-          <div class="order-details-box">
-            <p><strong>Order Reference:</strong> <span id="conf-order-id">#DGM-9482</span></p>
-            <p><strong>Estimated Delivery:</strong> 2–3 Business Days</p>
-          </div>
-          <p class="cod-reminder">Please keep the cash ready upon delivery when the courier arrives.</p>
-        </div>
-      </div>
-
       <!-- Payment Icons & Trust Badges -->
       <div class="payment-trust-card">
         <div class="payment-methods">
@@ -370,7 +299,6 @@
           <span class="pay-tag">Apple Pay</span>
           <span class="pay-tag">Google Pay</span>
           <span class="pay-tag">PayPal</span>
-          <span class="pay-tag">Cash on Delivery</span>
         </div>
         <div class="trust-guarantees">
           <div class="t-item">
