@@ -135,12 +135,12 @@
       <!-- Pricing Block -->
       <div class="product-price-box">
         <div class="price-row">
-          <span class="price-main" id="product-price">$99.00 USD</span>
-          <span class="price-strikethrough" id="product-compare-price">$179.00 USD</span>
-          <span class="price-savings-badge" id="product-discount-badge">Save $80 (44% OFF)</span>
+          <span class="price-main" id="product-price">$79.00 USD</span>
+          <span class="price-strikethrough" id="product-compare-price">$159.00 USD</span>
+          <span class="price-savings-badge" id="product-discount-badge">Save $80 (50% OFF)</span>
         </div>
         <p class="installments-text">
-          or 4 interest-free payments of <strong>$24.75</strong> with <span class="provider-pill">Klarna</span> / <span class="provider-pill">Afterpay</span>
+          or 4 interest-free payments of <strong>$19.75</strong> with <span class="provider-pill">Klarna</span> / <span class="provider-pill">Afterpay</span>
         </p>
       </div>
 
@@ -170,11 +170,11 @@
       {%- for v in current_product.variants -%}
         {%- assign opt_down = v.option1 | downcase -%}
         {%- assign title_down = v.title | downcase -%}
-        {%- if opt_down contains 'standard' or title_down contains 'standard' or v.price == 9900 -%}
+        {%- if opt_down contains 'standard' or title_down contains 'standard' or v.price == 7900 -%}
           {%- assign v_standard = v -%}
-        {%- elsif opt_down contains '18650' or title_down contains '18650' or opt_down contains 'double' or title_down contains 'double' or v.price == 12900 -%}
+        {%- elsif opt_down contains '18650' or title_down contains '18650' or opt_down contains 'double' or title_down contains 'double' or v.price == 9900 -%}
           {%- assign v_double = v -%}
-        {%- elsif opt_down contains 'master' or title_down contains 'master' or v.price == 14900 -%}
+        {%- elsif opt_down contains 'master' or title_down contains 'master' or v.price == 11900 -%}
           {%- assign v_master = v -%}
         {%- endif -%}
       {%- endfor -%}
@@ -198,13 +198,13 @@
         <div class="bundle-selector-group">
           <label class="bundle-group-label">Select Your Kit Configuration:</label>
 
-          <!-- Bundle 1: Standard Pro Kit ($99) — only shows if variant exists in Shopify -->
+          <!-- Bundle 1: Standard Pro Kit ($79) — only shows if variant exists in Shopify -->
           {%- if v_standard != nil -%}
           <div class="bundle-option active"
                data-bundle="standard"
                data-variant-id="{{ v_standard.id }}"
                data-price="{{ v_standard.price }}"
-               data-compare="{{ v_standard.compare_at_price | default: 17900 }}"
+               data-compare="{{ v_standard.compare_at_price | default: 15900 }}"
                onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="standard" checked>
             <div class="bundle-info">
@@ -217,7 +217,7 @@
           </div>
           {%- endif -%}
 
-          <!-- Bundle 2: Double Battery Deluxe ($129) -->
+          <!-- Bundle 2: Double Battery Deluxe ($99) -->
           {%- if v_double != nil -%}
           {%- assign double_active = '' -%}
           {%- assign double_checked = '' -%}
@@ -229,7 +229,7 @@
                data-bundle="double"
                data-variant-id="{{ v_double.id }}"
                data-price="{{ v_double.price }}"
-               data-compare="{{ v_double.compare_at_price | default: 22900 }}"
+               data-compare="{{ v_double.compare_at_price | default: 19900 }}"
                onclick="theme.bundles.select(this)">
             <span class="best-seller-tag">★ MOST POPULAR</span>
             <input type="radio" name="bundle_choice" value="double" {{ double_checked }}>
@@ -244,13 +244,13 @@
           {%- endif -%}
 
 
-          <!-- Bundle 3: Landscaper Master Kit -->
+          <!-- Bundle 3: Landscaper Master Kit ($119) -->
           {%- if v_master != nil -%}
           <div class="bundle-option"
                data-bundle="master"
                data-variant-id="{{ v_master.id }}"
                data-price="{{ v_master.price }}"
-               data-compare="{{ v_master.compare_at_price | default: 26900 }}"
+               data-compare="{{ v_master.compare_at_price | default: 23900 }}"
                onclick="theme.bundles.select(this)">
             <input type="radio" name="bundle_choice" value="master">
             <div class="bundle-info">
